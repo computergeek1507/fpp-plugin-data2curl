@@ -45,7 +45,7 @@ public:
 
     FPPTasmotaPlugin() : FPPPlugin("fpp-tasmota-plugin") {
         printf ("FPPTasmotaPlugin Starting\n");
-        sendConfigFileNow();
+        readFiles();
     }
     virtual ~FPPTasmotaPlugin() 
     {
@@ -99,6 +99,11 @@ public:
 	//Save obj setting to text file for PHP gui
         std::ofstream outfile;
         outfile.open ("/home/fpp/media/config/fpp-tasmota-plugin");
+		
+		if(_tasmotaOutputs.size() ==0) {
+			outfile <<  "nooutputsfound,1";
+			outfile <<  "\n";
+		}
         
         for(auto & out: _tasmotaOutputs)
         {
