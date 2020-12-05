@@ -1,10 +1,7 @@
-
 #include "TasmotaBulb.h"
 
 
 #include <stdlib.h>
-#include <list>
-#include <string>
 #include <cstdint>
 
 
@@ -12,10 +9,10 @@
 #include <istream>
 #include <ostream>
 
-#include <fstream>
-#include <filesystem>
 
-TasmotaBulb::TasmotaBulb() : _startChannel(1)
+TasmotaBulb::TasmotaBulb(std::string const& ip, unsigned int startChannel) :
+_startChannel(startChannel),
+_ipAddress(ip)
 {
 }
 
@@ -28,9 +25,6 @@ bool TasmotaBulb::BulbOn()
 {
 	try
 	{
-		if(_ipAddress.empty())
-			return false;
-
 		sendBulbOn();
 		return true;
 	}
@@ -46,9 +40,6 @@ bool TasmotaBulb::SendData( unsigned char *data)
 {
 	try
 	{
-		if(_ipAddress.empty())
-			return false;
-
 		outputData(data );
 		return true;
 	}

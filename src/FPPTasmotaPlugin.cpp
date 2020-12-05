@@ -100,13 +100,11 @@ public:
         std::ofstream outfile;
         outfile.open ("/home/fpp/media/config/fpp-tasmota-plugin");
         
-        for(auto & out: _zcppOutputs)
+        for(auto & out: _tasmotaOutputs)
         {
             outfile << out->GetIPAddress();
             outfile <<  ",";
             outfile << out->GetStartChannel();
-            outfile <<  ",";
-            outfile << out->GetChannelCount();
             outfile <<  "\n";
         }
         outfile.close();
@@ -118,20 +116,19 @@ public:
 	//read start channel settings from JSON setting file. 
 	//TODO: write php web GUI to populate the JSON file
         if (LoadJsonFromFile("/home/fpp/media/config/fpp-tasmota-plugin.json", config)) {
-            for(auto & out: _tasmotaOutputs)
-            {
-		//TODO: change JSON to parameter/value list
-                printf ("Reading Start Channel %s\n" ,out->GetIPAddress().c_str());
-                if (config.isMember(out->GetIPAddress()))
-                {
-                    out->SetStartChannel(config[out->GetIPAddress()].asInt());
-                    printf ("Setting Start Channel %d\n",out->GetStartChannel() );
-                }
-                else
-                {
-                    printf ("No Start Channel Setting Found\n" );
-                }
-            }
+            
+			  for (int i = 0; i < config.size(); i++) {
+
+				  std::string const ip = config[i]["ip"].asString();
+				  unsigned int sc =  config[i]["startchannel"].asInt();
+				  if(!ip.empty())
+				  {
+				  std::unique_ptr<TasmotaBulb> bulb = std::make_unique<TasmotaBulb>(ip,sc);
+
+                    printf ("Adding Bulb %s\n" ,bulb->GetIPAddress().c_str());
+                    _tasmotaOutputs.push_back(std::move(bulb));
+				  }
+			  }
         }
         
         saveDataToFile();

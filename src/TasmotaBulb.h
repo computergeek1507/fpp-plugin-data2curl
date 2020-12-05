@@ -1,15 +1,12 @@
 #pragma once
 
-
 #include <stdlib.h>
 #include <list>
 #include <string>
-#include <cstdint>
-
 
 class TasmotaBulb {
 public:
-    TasmotaBulb();
+    TasmotaBulb(std::string const& ip, unsigned int startChannel );
     ~TasmotaBulb();
 
     bool BulbOn();
@@ -18,7 +15,7 @@ public:
     bool SendData( unsigned char *data);
 
     unsigned int GetStartChannel(){return _startChannel;}
-    void SetStartChannel(unsigned int startChannel){ _startChannel = startChannel;}
+    //void SetStartChannel(unsigned int startChannel){ _startChannel = startChannel;}
 
 
 private:
