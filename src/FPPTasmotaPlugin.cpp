@@ -49,7 +49,7 @@ public:
     }
     virtual ~FPPTasmotaPlugin() 
     {
-         _tasmotaOutputs.clear();
+        _tasmotaOutputs.clear();
     }
 
     virtual const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) override {
@@ -62,14 +62,14 @@ public:
 #else
     virtual void modifySequenceData(int ms, uint8_t *seqData) override {
 #endif
-		try
-		{
-			sendChannelData(seqData);
-		}
-		catch(std::exception ex)
-		{
-			std::cout << ex.what();
-		}
+        try
+        {
+            sendChannelData(seqData);
+        }
+        catch(std::exception ex)
+        {
+            std::cout << ex.what();
+        }
     }
 
     virtual void playlistCallback(const Json::Value &playlist, const std::string &action, const std::string &section, int item) {
@@ -96,17 +96,15 @@ public:
     
     void saveDataToFile()
     {
-	//Save obj setting to text file for PHP gui
         std::ofstream outfile;
         outfile.open ("/home/fpp/media/config/fpp-tasmota-plugin");
-		
-		if(_tasmotaOutputs.size() ==0) {
-			outfile <<  "nooutputsfound,1";
-			outfile <<  "\n";
-		}
-        
-        for(auto & out: _tasmotaOutputs)
-        {
+
+        if(_tasmotaOutputs.size() ==0) {
+            outfile <<  "nooutputsfound,1";
+            outfile <<  "\n";
+        }
+
+        for(auto & out: _tasmotaOutputs) {
             outfile << out->GetIPAddress();
             outfile <<  ",";
             outfile << out->GetStartChannel();
@@ -118,32 +116,26 @@ public:
 
     void readFiles()
     {
-	//read start channel settings from JSON setting file. 
-	//TODO: write php web GUI to populate the JSON file
+    //read start channel settings from JSON setting file. 
+    //TODO: write php web GUI to populate the JSON file
         if (LoadJsonFromFile("/home/fpp/media/config/fpp-tasmota-plugin.json", config)) {
-            
-			  for (int i = 0; i < config.size(); i++) {
-
-				  std::string const ip = config[i]["ip"].asString();
-				  unsigned int sc =  config[i]["startchannel"].asInt();
-				  if(!ip.empty())
-				  {
-				  std::unique_ptr<TasmotaBulb> bulb = std::make_unique<TasmotaBulb>(ip,sc);
-
+            for (int i = 0; i < config.size(); i++) {
+                std::string const ip = config[i]["ip"].asString();
+                unsigned int sc =  config[i]["startchannel"].asInt();
+                if(!ip.empty()) {
+                    std::unique_ptr<TasmotaBulb> bulb = std::make_unique<TasmotaBulb>(ip,sc);
                     printf ("Adding Bulb %s\n" ,bulb->GetIPAddress().c_str());
                     _tasmotaOutputs.push_back(std::move(bulb));
-				  }
-			  }
+                }
+            }
         }
-        
         saveDataToFile();
     }
     
     std::string getIPs()
     {
         std::string ips;
-        for(auto & out: _tasmotaOutputs)
-        {
+        for(auto & out: _tasmotaOutputs) {
             ips += out->GetIPAddress();
             ips += ",";
         }
