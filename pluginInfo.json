@@ -1,0 +1,20 @@
+{
+	"repoName": "fpp-tasmota-plugin",
+	"name": "Tasmota Plugin for FPP",
+	"author": "Scott Hanson (computergeek1507)",
+	"description": "This plugin allows channel data to be sent to a Tasmota bulb.",
+	"homeURL": "https://github.com/computergeek1507/fpp-tasmota-plugin",
+	"srcURL": "https://github.com/computergeek1507/fpp-tasmota-plugin.git",
+	"bugURL": "https://github.com/computergeek1507/fpp-tasmota-plugin/issues",
+	"allowUpdates": 1,
+	"versions": [
+		{
+			"minFPPVersion": "4.0",
+			"maxFPPVersion": "0",
+			"branch": "master",
+			"sha": "",
+			"dependencies": {
+			}
+		}
+	]
+}
