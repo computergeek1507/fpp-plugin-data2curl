@@ -15,7 +15,7 @@ function gobutton() {
 <fieldset>
 <legend>FPP Tasmota Plugin</legend>
 
-<h3>Loaded  Configs</h3>
+<h3>Loaded Tasmota Blubs</h3>
 <div>
  <?php
  $fp = fopen("/home/fpp/media/config/fpp-tasmota-plugin", "r") or die("error");
@@ -29,7 +29,7 @@ function gobutton() {
  }
  fclose($fp);
  print "<table border='1' cellspacing='0' cellpadding='3'>";
- print "<tr><td>IP</td><td>Start</td></tr>";
+ print "<tr><td>IP</td><td>Start Channel</td></tr>";
  foreach($tasmotaBulbs as $bulb)
  {
 	  print "<tr><td>{$bulb[0]}</td><td>{$bulb[1]}</td></tr>";

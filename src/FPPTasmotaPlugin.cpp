@@ -116,9 +116,8 @@ public:
 
     void readFiles()
     {
-    //read start channel settings from JSON setting file. 
-    //TODO: write php web GUI to populate the JSON file
-        if (LoadJsonFromFile("/home/fpp/media/config/fpp-tasmota-plugin.json", config)) {
+    //read ip and start channel settings from JSON setting file. 
+        if (LoadJsonFromFile("/home/fpp/media/config/plugin.fpp-tasmota.json", config)) {
             for (int i = 0; i < config.size(); i++) {
                 std::string const ip = config[i]["ip"].asString();
                 unsigned int sc =  config[i]["startchannel"].asInt();

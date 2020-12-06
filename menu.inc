@@ -13,9 +13,15 @@
 
 $menuEntries = Array(
 	Array(
-		'text' => 'Tasmota - Configuration',
+		'text' => 'Tasmota - Status',
 		'type' => 'status',
 		'page' => 'status.php',
+		'wrap' => 1
+	),
+	Array(
+		'text' => 'Tasmota - Configuration',
+		'type' => 'output',
+		'page' => 'plugin_setup.php',
 		'wrap' => 1
 	),
 	Array(
