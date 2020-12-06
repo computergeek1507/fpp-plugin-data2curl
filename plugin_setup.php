@@ -29,7 +29,7 @@ $pluginJson = convertAndGetSettings();
 
 <div id="global" class="settings">
 <fieldset>
-<legend>FPP Tasmota Config</legend>
+<legend>FPP Tasmota Bulb Config</legend>
 
 <script>
 
