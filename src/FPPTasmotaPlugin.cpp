@@ -10,7 +10,7 @@
 
 #include <iostream> 
 
-#include <filesystem>
+#include <thread> 
 
 #include <vector>
 
@@ -44,7 +44,7 @@ private:
 public:
 
     FPPTasmotaPlugin() : FPPPlugin("fpp-tasmota-plugin") {
-        printf ("FPPTasmotaPlugin Starting\n");
+        printf ("FPP-Tasmota-Plugin Starting\n");
         readFiles();
     }
     virtual ~FPPTasmotaPlugin() 
@@ -81,7 +81,6 @@ public:
     void sendBulbsOn() {
         for(auto & output: _tasmotaOutputs)
         {
-            printf ("Sending BulbOn %s\n" ,output->GetIPAddress().c_str());
             output->BulbOn();
         }
     }
@@ -89,7 +88,6 @@ public:
     void sendChannelData(unsigned char *data) {
         for(auto & output: _tasmotaOutputs)
         {
-            printf ("Sending Data %s\n" ,output->GetIPAddress().c_str());
             output->SendData(data);
         }
     }
@@ -116,7 +114,7 @@ public:
 
     void readFiles()
     {
-    //read ip and start channel settings from JSON setting file. 
+        //read ip and start channel settings from JSON setting file. 
         if (LoadJsonFromFile("/home/fpp/media/config/plugin.fpp-tasmota.json", config)) {
             for (int i = 0; i < config.size(); i++) {
                 std::string const ip = config[i]["ip"].asString();

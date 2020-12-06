@@ -12,6 +12,8 @@ public:
     ~TasmotaBulb();
 
     bool BulbOn();
+    bool BulbOff();
+    bool BulbWhite();
 
     std::string GetIPAddress(){return _ipAddress;}
     bool SendData( unsigned char *data);
@@ -25,9 +27,11 @@ private:
     uint8_t _r;
     uint8_t _g;
     uint8_t _b;
+    bool unreachable;
 
     CURL                  *m_curl;
 
-    void outputData( unsigned char *data);
+    void outputData( uint8_t r ,uint8_t g ,uint8_t b );
     void sendBulbOn();
+	void sendBulbOff();
 };
