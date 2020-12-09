@@ -41,7 +41,7 @@ function gobutton() {
 
 <h4>About</h4>
 <p>
-The FPP Tasmota plugin will send color data to a Tasmota Bulb.
+The FPP Tasmota plugin will send color data to Tasmota Bulbs.
 <p>
 
 </fieldset>
