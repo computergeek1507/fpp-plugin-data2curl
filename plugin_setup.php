@@ -46,8 +46,11 @@ function AddCURLItem() {
     }
     html += "'><td class='colNumber rowNumber'>" + id + ".</td><td><span style='display: none;' class='uniqueId'>" + uniqueId + "</span></td>";
     html += "<td><input type='text' minlength='7' maxlength='15' size='15' pattern='^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$' class='ipaddress' /></td>";
+    html += "<td><input type='number' value='80' min='1' max='65555' class='port' />"
     html += "<td><input type='text' minlength='1' maxlength='50' size='15' class='url' /></td>";
     html += "<td><input type='text' minlength='1' maxlength='100' size='15' class='message' /></td>";
+    html += "<td><input type='text' value='POST' minlength='1' maxlength='10' size='10' class='posttype' /></td>";
+    html += "<td><input type='text' value='text/plain' minlength='1' maxlength='50' size='15' class='contenttype' /></td>";
     html += "<td><input type='number' value='1' min='1' max='10000000' class='startchan' />"
     html += "</tr>";
     
@@ -63,14 +66,20 @@ function AddCURLItem() {
 
 function SaveCURLItem(row) {
     var ip = $(row).find('.ipaddress').val();
+    var port = parseInt($(row).find('.port').val(),10);
     var url = $(row).find('.url').val();
     var message = $(row).find('.message').val();
+    var posttype = $(row).find('.posttype').val();
+    var contenttype = $(row).find('.contenttype').val();
     var startchan = parseInt($(row).find('.startchan').val(),10);
 
     var json = {
         "ip": ip,
+        "port" : port,
         "url": url,
         "message": message,
+        "type": posttype,
+        "contenttype": contenttype,
         "startchannel": startchan
     };
     return json;
@@ -150,7 +159,7 @@ $(document).ready(function() {
 <div class='fppTableWrapper fppTableWrapperAsTable'>
 <div class='fppTableContents'>
 <table class="fppTable" id="data2curlTable"  width='100%'>
-<thead><tr class="fppTableHeader"><th>#</th><th></th><th>IP</th><th>URL</th><th>Message</th><th>Start Chan</th></tr></thead>
+<thead><tr class="fppTableHeader"><th>#</th><th></th><th>IP</th><th>Port</th><th>URL</th><th>Message</th><th>Type</th><th>Content</th><th>Start Chan</th></tr></thead>
 <tbody id='data2curlTableBody'>
 </tbody>
 </table>
@@ -160,7 +169,7 @@ $(document).ready(function() {
 <div>
 <table border=1>
 <tr><td colspan='2'>Replace Values In Url or Message i.e. "/cmd=%R%,%G%,%B%"</td>
-</tr><tr><td>Parmeter</td><td>Key</td></tr>
+</tr><tr><td>Value</td><td>Parmeter</td></tr>
 </tr><tr><td>1st Channel(0-255)</td><td>%R%</td></tr>
 </tr><tr><td>2st Channel(0-255)</td><td>%G%</td></tr>
 </tr><tr><td>3st Channel(0-255)</td><td>%B%</td></tr>
@@ -170,6 +179,7 @@ $(document).ready(function() {
 </tr><tr><td>Hue Value(0-360)</td><td>%H%</td></tr>
 </tr><tr><td>Sat Value(0-100)</td><td>%S%</td></tr>
 </tr><tr><td>Int Value(0-100)</td><td>%I%</td></tr>
+</tr><tr><td>1st Channel as Switch Value(ON or OFF)</td><td>%SW%</td></tr>
 </table>
 </div>
 </div>
@@ -178,8 +188,11 @@ $(document).ready(function() {
 $.each(data2curlConfig, function( key, val ) {
     var row = AddCURLItem();
     $(row).find('.ipaddress').val(val["ip"]);
+    $(row).find('.port').val(val["port"]);
     $(row).find('.url').val(val["url"]);
     $(row).find('.message').val(val["message"]);
+    $(row).find('.posttype').val(val["type"]);
+    $(row).find('.contenttype').val(val["contenttype"]);
     $(row).find('.startchannel').val(val["startchannel"]);
 
 });

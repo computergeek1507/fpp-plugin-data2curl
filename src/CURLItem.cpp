@@ -9,11 +9,15 @@
 #include <istream>
 #include <ostream>
 
-CURLItem::CURLItem(std::string const& ip, std::string const& url, std::string const& message, unsigned int startChannel) :
+CURLItem::CURLItem(std::string const& ip, unsigned int port, std::string const& url, std::string const& message, 
+                                std::string const& type, std::string const& contentType, unsigned int startChannel) :
     _startChannel(startChannel),
     _ipAddress(ip),
+    _port(port),
     _url(url),
     _message(message),
+    _type(type),
+    _contentType(contentType),
     _r(0),
     _g(0),
     _b(0),
@@ -55,7 +59,7 @@ bool CURLItem::SendData( unsigned char *data)
     catch(std::exception ex)
     {
         _unreachable = true;
-        LogInfo(VB_PLUGIN, ex.what());
+        LogInfo(VB_PLUGIN, "Error %s \n",ex.what());
     }
     return false;
 }
@@ -68,14 +72,20 @@ void CURLItem::outputData( uint8_t r ,uint8_t g ,uint8_t b )
         replaceValues(newURL, r, g, b);
     }
 
-    std::string repURL = "http://" + _ipAddress + newURL;
-    curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 1L);
-    curl_easy_setopt(m_curl, CURLOPT_URL, repURL.c_str());
+    curl_easy_setopt(m_curl, CURLOPT_CUSTOMREQUEST, _type.c_str());
+    struct curl_slist *hs = NULL;
+    std::string const content = "Content-Type: " + _contentType;
+    hs = curl_slist_append(hs, content.c_str());
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, hs);
+
     if(!newMessage.empty()){
         replaceValues(newMessage, r, g, b);
-        curl_easy_setopt(m_curl, CURLOPT_POSTFIELDSIZE, newMessage.size());
-        curl_easy_setopt(m_curl, CURLOPT_COPYPOSTFIELDS, newMessage.c_str());
+        curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, newMessage.c_str());
     }
+
+    std::string const repURL = "http://" + _ipAddress + ":" + std::to_string(_port) + newURL;
+    curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 1L);
+    curl_easy_setopt(m_curl, CURLOPT_URL, repURL.c_str());
 
     CURLcode status = curl_easy_perform(m_curl);
     if (status != CURLE_OK) {
@@ -97,6 +107,11 @@ void CURLItem::replaceValues(std::string & valueStr, uint8_t r ,uint8_t g ,uint8
     replaceAll(valueStr, "%RS%" , std::to_string(rScale));
     replaceAll(valueStr, "%GS%" , std::to_string(gScale));
     replaceAll(valueStr, "%BS%" , std::to_string(bScale));
+
+    if(r>127) 
+        replaceAll(valueStr, "%SW%" , "ON");
+    else
+        replaceAll(valueStr, "%SW%" , "OFF");
 
     float h,s,i;
 

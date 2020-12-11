@@ -98,12 +98,14 @@ public:
         outfile.open ("/home/fpp/media/config/fpp-plugin-data2curl");
 
         if(_CURLOutputs.size() ==0) {
-            outfile <<  "nooutputsfound;;;1";
+            outfile <<  "nooutputsfound;;;;1";
             outfile <<  "\n";
         }
 
         for(auto & out: _CURLOutputs) {
             outfile << out->GetIPAddress();
+            outfile <<  ";";
+            outfile << out->GetPort();
             outfile <<  ";";
             outfile << out->GetURL();
             outfile <<  ";";
@@ -122,12 +124,17 @@ public:
         if (LoadJsonFromFile("/home/fpp/media/config/plugin.data2curl.json", config)) {
             for (int i = 0; i < config.size(); i++) {
                 std::string const ip = config[i]["ip"].asString();
+                unsigned int port = config[i]["port"].asInt();
                 std::string const url = config[i]["url"].asString();
                 std::string const message = config[i]["message"].asString();
+                std::string const type = config[i]["type"].asString();
+                std::string const contenttype = config[i]["contenttype"].asString();
+
                 unsigned int sc =  config[i]["startchannel"].asInt();
                 if(!ip.empty()) {
-                    std::unique_ptr<CURLItem> mqttItem = std::make_unique<CURLItem>(ip,url,message,sc);
-                    _CURLOutputs.push_back(std::move(mqttItem));
+                    LogInfo(VB_PLUGIN, "Adding IP %s \n", ip.c_str());
+                    std::unique_ptr<CURLItem> curlItem = std::make_unique<CURLItem>(ip, port, url, message, type, contenttype, sc);
+                    _CURLOutputs.push_back(std::move(curlItem));
                 }
             }
         }
