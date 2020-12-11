@@ -108,7 +108,7 @@ void CURLItem::replaceValues(std::string & valueStr, uint8_t r ,uint8_t g ,uint8
     replaceAll(valueStr, "%GS%" , std::to_string(gScale));
     replaceAll(valueStr, "%BS%" , std::to_string(bScale));
 
-    if(r>127) 
+    if(r > 254)
         replaceAll(valueStr, "%SW%" , "ON");
     else
         replaceAll(valueStr, "%SW%" , "OFF");
