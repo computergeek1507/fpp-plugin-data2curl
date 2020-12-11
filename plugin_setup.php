@@ -47,8 +47,8 @@ function AddCURLItem() {
     html += "'><td class='colNumber rowNumber'>" + id + ".</td><td><span style='display: none;' class='uniqueId'>" + uniqueId + "</span></td>";
     html += "<td><input type='text' minlength='7' maxlength='15' size='15' pattern='^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$' class='ipaddress' /></td>";
     html += "<td><input type='number' value='80' min='1' max='65555' class='port' />"
-    html += "<td><input type='text' minlength='1' maxlength='50' size='15' class='url' /></td>";
-    html += "<td><input type='text' minlength='1' maxlength='100' size='15' class='message' /></td>";
+    html += "<td><input type='text' value='/' minlength='1' maxlength='50' size='15' class='url' /></td>";
+    html += "<td><input type='text' value='%R%,%G%,%B%' minlength='1' maxlength='100' size='15' class='message' /></td>";
     html += "<td><input type='text' value='POST' minlength='1' maxlength='10' size='10' class='posttype' /></td>";
     html += "<td><input type='text' value='text/plain' minlength='1' maxlength='50' size='15' class='contenttype' /></td>";
     html += "<td><input type='number' value='1' min='1' max='10000000' class='startchan' />"
