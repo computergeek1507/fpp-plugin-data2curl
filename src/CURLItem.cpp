@@ -80,10 +80,12 @@ void CURLItem::outputData( uint8_t r ,uint8_t g ,uint8_t b )
 
     if(!newMessage.empty()){
         replaceValues(newMessage, r, g, b);
+        LogInfo(VB_PLUGIN, "Data '%s'\n",newMessage.c_str());
         curl_easy_setopt(m_curl, CURLOPT_POSTFIELDS, newMessage.c_str());
     }
 
     std::string const repURL = "http://" + _ipAddress + ":" + std::to_string(_port) + newURL;
+    LogInfo(VB_PLUGIN, "URL '%s'\n",repURL.c_str());
     curl_easy_setopt(m_curl, CURLOPT_TIMEOUT, 1L);
     curl_easy_setopt(m_curl, CURLOPT_URL, repURL.c_str());
 
@@ -115,9 +117,9 @@ void CURLItem::replaceValues(std::string & valueStr, uint8_t r ,uint8_t g ,uint8
 
     float h,s,i;
 
-    RGBtoHSI(r/255.0,r/255.0,r/255.0,h,s,i);
+    RGBtoHSI(r/255,g/255,b/255,h,s,i);
     
-    int ih = (h*100)/360;
+    int ih = (h);
     int is = (s*100);
     int ii = (i*100);
     
@@ -155,5 +157,8 @@ void CURLItem::RGBtoHSI(float fR, float fG, float fB, float& fH, float& fS, floa
             fS = 0.0;
         }
     }
+
+    if(fH < 0.0)
+        fH += 360.0;
 }
 
