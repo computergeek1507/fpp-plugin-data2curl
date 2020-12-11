@@ -169,7 +169,7 @@ $(document).ready(function() {
 <div>
 <table border=1>
 <tr><td colspan='2'>Replace Values In Url or Message i.e. "/cmd=%R%,%G%,%B%"</td>
-</tr><tr><td>Value</td><td>Parmeter</td></tr>
+</tr><tr><td>Value</td><td>Parameter</td></tr>
 </tr><tr><td>1st Channel(0-255)</td><td>%R%</td></tr>
 </tr><tr><td>2st Channel(0-255)</td><td>%G%</td></tr>
 </tr><tr><td>3st Channel(0-255)</td><td>%B%</td></tr>
