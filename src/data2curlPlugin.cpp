@@ -27,33 +27,32 @@
 #include "Plugins.h"
 #include "log.h"
 #include "channeloutput/channeloutput.h"
-#include "mqtt.h"
 #include "MultiSync.h"
 
 #include "fppversion_defines.h"
 
 #include "commands/Commands.h"
 
-#include "TasmotaBulb.h"
+#include "CURLItem.h"
 
-class FPPTasmotaPlugin : public FPPPlugin, public httpserver::http_resource {
+class Data2CURLPlugin : public FPPPlugin, public httpserver::http_resource {
 private:
-    std::vector<std::unique_ptr <TasmotaBulb>> _tasmotaOutputs;
+    std::vector<std::unique_ptr <CURLItem>> _CURLOutputs;
     Json::Value config;
 
 public:
 
-    FPPTasmotaPlugin() : FPPPlugin("fpp-tasmota-plugin") {
-        printf ("FPP-Tasmota-Plugin Starting\n");
+    Data2CURLPlugin() : FPPPlugin("fpp-plugin-data2curl") {
+        LogInfo(VB_PLUGIN, "Initializing Data2CURL Plugin\n");
         readFiles();
     }
-    virtual ~FPPTasmotaPlugin() 
+    virtual ~Data2CURLPlugin() 
     {
-        _tasmotaOutputs.clear();
+        _CURLOutputs.clear();
     }
 
     virtual const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) override {
-        std::string v = getIPs();
+        std::string v = getTopics();
         return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(v, 200));
     }
     
@@ -74,19 +73,20 @@ public:
 
     virtual void playlistCallback(const Json::Value &playlist, const std::string &action, const std::string &section, int item) {
         if (settings["Start"] == "PlaylistStart" && action == "start") {
-            sendBulbsOn();
+            EnableCURLItems();
         }  
     }
-    
-    void sendBulbsOn() {
-        for(auto & output: _tasmotaOutputs)
+
+    void EnableCURLItems() {
+        for(auto & output: _CURLOutputs)
         {
-            output->BulbOn();
+            output->EnableOutput();
         }
     }
+    
 
     void sendChannelData(unsigned char *data) {
-        for(auto & output: _tasmotaOutputs)
+        for(auto & output: _CURLOutputs)
         {
             output->SendData(data);
         }
@@ -95,16 +95,20 @@ public:
     void saveDataToFile()
     {
         std::ofstream outfile;
-        outfile.open ("/home/fpp/media/config/fpp-tasmota-plugin");
+        outfile.open ("/home/fpp/media/config/fpp-plugin-data2curl");
 
-        if(_tasmotaOutputs.size() ==0) {
-            outfile <<  "nooutputsfound,1";
+        if(_CURLOutputs.size() ==0) {
+            outfile <<  "nooutputsfound;;;1";
             outfile <<  "\n";
         }
 
-        for(auto & out: _tasmotaOutputs) {
+        for(auto & out: _CURLOutputs) {
             outfile << out->GetIPAddress();
-            outfile <<  ",";
+            outfile <<  ";";
+            outfile << out->GetURL();
+            outfile <<  ";";
+            outfile << out->GetMessage();
+            outfile <<  ";";
             outfile << out->GetStartChannel();
             outfile <<  "\n";
         }
@@ -114,36 +118,36 @@ public:
 
     void readFiles()
     {
-        //read ip and start channel settings from JSON setting file. 
-        if (LoadJsonFromFile("/home/fpp/media/config/plugin.fpp-tasmota.json", config)) {
+        //read topic, payload and start channel settings from JSON setting file. 
+        if (LoadJsonFromFile("/home/fpp/media/config/plugin.data2curl.json", config)) {
             for (int i = 0; i < config.size(); i++) {
                 std::string const ip = config[i]["ip"].asString();
+                std::string const url = config[i]["url"].asString();
+                std::string const message = config[i]["message"].asString();
                 unsigned int sc =  config[i]["startchannel"].asInt();
                 if(!ip.empty()) {
-                    std::unique_ptr<TasmotaBulb> bulb = std::make_unique<TasmotaBulb>(ip,sc);
-                    printf ("Adding Bulb %s\n" ,bulb->GetIPAddress().c_str());
-                    _tasmotaOutputs.push_back(std::move(bulb));
+                    std::unique_ptr<CURLItem> mqttItem = std::make_unique<CURLItem>(ip,url,message,sc);
+                    _CURLOutputs.push_back(std::move(mqttItem));
                 }
             }
         }
         saveDataToFile();
     }
     
-    std::string getIPs()
+    std::string getTopics()
     {
-        std::string ips;
-        for(auto & out: _tasmotaOutputs) {
-            ips += out->GetIPAddress();
-            ips += ",";
+        std::string topics;
+        for(auto & out: _CURLOutputs) {
+            topics += out->GetIPAddress();
+            topics += ",";
         }
-        printf ("IP Adresses %s\n" ,ips.c_str());
-        return ips;
+        return topics;
     } 
 };
 
 
 extern "C" {
     FPPPlugin *createPlugin() {
-        return new FPPTasmotaPlugin();
+        return new Data2CURLPlugin();
     }
 }

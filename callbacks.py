@@ -8,7 +8,7 @@ import json
 import subprocess
 
 class Logger(object):
-    def __init__(self, filename="/home/fpp/media/logs/fpp-tasmota.log"):
+    def __init__(self, filename="/home/fpp/media/logs/fpp-plugin-data2curl.log"):
         self.terminal = sys.stdout
         self.log = open(filename, "a")
 
@@ -16,9 +16,9 @@ class Logger(object):
         self.terminal.write(message)
         self.log.write(message)
 
-sys.stdout = Logger("/home/fpp/media/logs/fpp-tasmota.log")
+sys.stdout = Logger("/home/fpp/media/logs/fpp-plugin-data2curl.log")
 
-parser = argparse.ArgumentParser(description='Tasmota Plugin')
+parser = argparse.ArgumentParser(description='data2curl Plugin')
 parser.add_argument('-l','--list', help='Plugin Actions',action='store_true')
 args = parser.parse_args()
 

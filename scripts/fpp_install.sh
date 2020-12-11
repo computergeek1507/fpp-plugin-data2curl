@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# fpp-tasmota install script
+# fpp-plugin-data2curl install script
 
 BASEDIR=$(dirname $0)
 cd $BASEDIR

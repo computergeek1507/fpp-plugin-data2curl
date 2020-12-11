@@ -1,11 +1,11 @@
 {
-	"repoName": "fpp-tasmota-plugin",
-	"name": "Tasmota Plugin for FPP",
+	"repoName": "fpp-plugin-data2curl",
+	"name": "data2curl Plugin for FPP",
 	"author": "Scott Hanson (computergeek1507)",
-	"description": "This plugin allows channel data to be sent to a Tasmota bulb.",
-	"homeURL": "https://github.com/computergeek1507/fpp-tasmota-plugin",
-	"srcURL": "https://github.com/computergeek1507/fpp-tasmota-plugin.git",
-	"bugURL": "https://github.com/computergeek1507/fpp-tasmota-plugin/issues",
+	"description": "This plugin allows channel data to be sent to a URL endpoint.",
+	"homeURL": "https://github.com/computergeek1507/fpp-plugin-data2curl",
+	"srcURL": "https://github.com/computergeek1507/fpp-plugin-data2curl.git",
+	"bugURL": "https://github.com/computergeek1507/fpp-plugin-data2curl/issues",
 	"allowUpdates": 1,
 	"versions": [
 		{

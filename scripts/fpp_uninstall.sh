@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# fpp-tasmota uninstall script
+# fpp-plugin-data2curl uninstall script
 
