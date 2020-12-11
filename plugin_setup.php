@@ -38,15 +38,16 @@ var data2curlConfig = <? echo json_encode($pluginJson, JSON_PRETTY_PRINT); ?>;
 
 var uniqueId = 1;
 var modelOptions = "";
-function AddTopic() {
+function AddCURLItem() {
     var id = $("#data2curlTableBody > tr").length + 1;
     var html = "<tr class='fppTableRow";
     if (id % 2 != 0) {
         html += " oddRow'";
     }
     html += "'><td class='colNumber rowNumber'>" + id + ".</td><td><span style='display: none;' class='uniqueId'>" + uniqueId + "</span></td>";
-    html += "<td><input type='text' minlength='1' maxlength='50' size='15' class='topic' /></td>";
-    html += "<td><input type='text' minlength='1' maxlength='50' size='15' class='payload' /></td>";
+    html += "<td><input type='text' minlength='7' maxlength='15' size='15' pattern='^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$' class='ipaddress' /></td>";
+    html += "<td><input type='text' minlength='1' maxlength='50' size='15' class='url' /></td>";
+    html += "<td><input type='text' minlength='1' maxlength='100' size='15' class='message' /></td>";
     html += "<td><input type='number' value='1' min='1' max='10000000' class='startchan' />"
     html += "</tr>";
     
@@ -60,24 +61,26 @@ function AddTopic() {
     return newRow;
 }
 
-function SaveMQTTItem(row) {
-    var topic = $(row).find('.topic').val();
-    var payload = $(row).find('.payload').val();
+function SaveCURLItem(row) {
+    var ip = $(row).find('.ipaddress').val();
+    var url = $(row).find('.url').val();
+    var message = $(row).find('.message').val();
     var startchan = parseInt($(row).find('.startchan').val(),10);
 
     var json = {
-        "topic": topic,
-        "payload": payload,
+        "ip": ip,
+        "url": url,
+        "message": message,
         "startchannel": startchan
     };
     return json;
 }
 
-function SaveMQTTItems() {
+function SaveCURLItems() {
     var data2curlConfig = [];
     var i = 0;
     $("#data2curlTableBody > tr").each(function() {
-        data2curlConfig[i++] = SaveMQTTItem(this);
+        data2curlConfig[i++] = SaveCURLItem(this);
     });
     
     var data = JSON.stringify(data2curlConfig);
@@ -107,7 +110,7 @@ function RenumberRows() {
         }
     });
 }
-function RemoveTopic() {
+function RemoveCURLItem() {
     if ($('#data2curlTableBody').find('.selectedEntry').length) {
         $('#data2curlTableBody').find('.selectedEntry').remove();
         RenumberRows();
@@ -137,9 +140,9 @@ $(document).ready(function() {
 <div>
 <table border=0>
 <tr><td colspan='2'>
-        <input type="button" value="Save" class="buttons genericButton" onclick="SaveMQTTItems();">
-        <input type="button" value="Add" class="buttons genericButton" onclick="AddTopic();">
-        <input id="delButton" type="button" value="Delete" class="deleteEventButton disableButtons genericButton" onclick="RemoveTopic();">
+        <input type="button" value="Save" class="buttons genericButton" onclick="SaveCURLItems();">
+        <input type="button" value="Add" class="buttons genericButton" onclick="AddCURLItem();">
+        <input id="delButton" type="button" value="Delete" class="deleteEventButton disableButtons genericButton" onclick="RemoveCURLItem();">
     </td>
 </tr>
 </table>
@@ -147,20 +150,36 @@ $(document).ready(function() {
 <div class='fppTableWrapper fppTableWrapperAsTable'>
 <div class='fppTableContents'>
 <table class="fppTable" id="data2curlTable"  width='100%'>
-<thead><tr class="fppTableHeader"><th>#</th><th></th><th>Topic</th><th>Payload</th><th>Start Chan</th></tr></thead>
+<thead><tr class="fppTableHeader"><th>#</th><th></th><th>IP</th><th>URL</th><th>Message</th><th>Start Chan</th></tr></thead>
 <tbody id='data2curlTableBody'>
 </tbody>
 </table>
 </div>
-</div>
 
+</div>
+<div>
+<table border=1>
+<tr><td colspan='2'>Replace Values In Url or Message i.e. "/cmd=%R%,%G%,%B%"</td>
+</tr><tr><td>Parmeter</td><td>Key</td></tr>
+</tr><tr><td>1st Channel(0-255)</td><td>%R%</td></tr>
+</tr><tr><td>2st Channel(0-255)</td><td>%G%</td></tr>
+</tr><tr><td>3st Channel(0-255)</td><td>%B%</td></tr>
+</tr><tr><td>1st Channel(0-100)</td><td>%RS%</td></tr>
+</tr><tr><td>2st Channel(0-100)</td><td>%GS%</td></tr>
+</tr><tr><td>3st Channel(0-100)</td><td>%BS%</td></tr>
+</tr><tr><td>Hue Value(0-360)</td><td>%H%</td></tr>
+</tr><tr><td>Sat Value(0-100)</td><td>%S%</td></tr>
+</tr><tr><td>Int Value(0-100)</td><td>%I%</td></tr>
+</table>
+</div>
 </div>
 <script>
 
 $.each(data2curlConfig, function( key, val ) {
-    var row = AddTopic();
-    $(row).find('.topic').val(val["topic"]);
-    $(row).find('.payload').val(val["payload"]);
+    var row = AddCURLItem();
+    $(row).find('.ipaddress').val(val["ip"]);
+    $(row).find('.url').val(val["url"]);
+    $(row).find('.message').val(val["message"]);
     $(row).find('.startchannel').val(val["startchannel"]);
 
 });
