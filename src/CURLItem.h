@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <list>
 #include <string>
+#include <atomic>
 
 #include "common.h"
 #include "log.h"
@@ -34,16 +35,17 @@ private:
     std::string _contentType;
     std::string _type;
     unsigned int _startChannel;
+    unsigned int _seqCount;
 
     uint8_t _r;
     uint8_t _g;
     uint8_t _b;
-    bool _unreachable;
+    std::atomic<bool> _unreachable;
 
     CURL *m_curl;
 
     void outputData( uint8_t r ,uint8_t g ,uint8_t b );
 
     void replaceValues(std::string & valueStr, uint8_t r ,uint8_t g ,uint8_t b );
-    void RGBtoHSI(float fR, float fG, float fB, float& fH, float& fS, float& fI);
+    void RGBtoHSIV(float fR, float fG, float fB, float& fH, float& fSI, float& fSV,float& fI, float& fV);
 };

@@ -22,6 +22,7 @@ CURLItem::CURLItem(std::string const& ip, unsigned int port, std::string const& 
     _g(0),
     _b(0),
     _unreachable(false),
+    _seqCount(0),
     m_curl(NULL)
 {
     m_curl = curl_easy_init();
@@ -45,8 +46,12 @@ bool CURLItem::SendData( unsigned char *data)
         uint8_t b = data[_startChannel + 1];
 
         if(r == _r && g == _g && b == _b) {
+            if(_seqCount<1201) {
+            ++_seqCount;
             return true;
+            }
         }
+        _seqCount=0;
         _r = r;
         _g = g;
         _b = b;
@@ -115,29 +120,35 @@ void CURLItem::replaceValues(std::string & valueStr, uint8_t r ,uint8_t g ,uint8
     else
         replaceAll(valueStr, "%SW%" , "OFF");
 
-    float h,s,i;
+    float h,si,sv,i,v;
 
-    RGBtoHSI(r/255,g/255,b/255,h,s,i);
+    RGBtoHSIV(r/255,g/255,b/255,h,si,sv,i,v);
     
     int ih = (h);
-    int is = (s*100);
+    int isi = (si*100);
+    int isv = (sv*100);
     int ii = (i*100);
+    int iv = (v*100);
     
     replaceAll(valueStr, "%H%" , std::to_string(ih));
-    replaceAll(valueStr, "%S%" , std::to_string(is));
+    replaceAll(valueStr, "%S%" , std::to_string(isi));
+    replaceAll(valueStr, "%SI%" , std::to_string(isi));
+    replaceAll(valueStr, "%SV%" , std::to_string(isv));
     replaceAll(valueStr, "%I%" , std::to_string(ii));
+    replaceAll(valueStr, "%V%" , std::to_string(iv));
 }
 
-void CURLItem::RGBtoHSI(float fR, float fG, float fB, float& fH, float& fS, float& fI) {
+void CURLItem::RGBtoHSIV(float fR, float fG, float fB, float& fH, float& fSI, float& fSV,float& fI, float& fV) {
     float M  = std::max(std::max(fR, fG), fB);
     float m = std::min(std::min(fR, fG), fB);
     float c = M-m;
-  
+    fV = M;
+    //fL = (1.0/2.0)*(M+m);
     fI = (1.0/3.0)*(fR+fG+fB);
   
     if(c==0) {
         fH = 0.0;
-        fS = 0.0;
+        fSI = 0.0;
     }
     else {
         if(M==fR) {
@@ -151,12 +162,14 @@ void CURLItem::RGBtoHSI(float fR, float fG, float fB, float& fH, float& fS, floa
         }
         fH *=60.0;
         if(fI!=0) {
-            fS = 1.0 - (m/fI);
+            fSI = 1.0 - (m/fI);
         }
         else {
-            fS = 0.0;
+            fSI = 0.0;
         }
     }
+
+    fSV = M == 0 ? 0 : (M - m) / M;
 
     if(fH < 0.0)
         fH += 360.0;
