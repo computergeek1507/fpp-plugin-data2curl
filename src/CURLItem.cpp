@@ -47,8 +47,8 @@ bool CURLItem::SendData( unsigned char *data)
 
         if(r == _r && g == _g && b == _b) {
             if(_seqCount<1201) {
-            ++_seqCount;
-            return true;
+                ++_seqCount;
+                return true;
             }
         }
         _seqCount=0;
